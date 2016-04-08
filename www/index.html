@@ -31,29 +31,35 @@
         var output = document.getElementById('output');
 
         source.onmessage = function(event) {
+            if ("ping" === event.data) {
+                return;
+            }
+
             var obj = JSON.parse(event.data);
 
-            var entity_id = obj.data.new_state.entity_id.replace(/\./g, "_");
-            var friendly_name = obj.data.new_state.attributes.friendly_name;
-            var state = obj.data.new_state.state;
-            var unit = obj.data.new_state.attributes.unit_of_measurement;
+            if ("undefined" !== typeof obj.data.new_state) {
+                var entity_id = obj.data.new_state.entity_id.replace(/\./g, "_");
+                var friendly_name = obj.data.new_state.attributes.friendly_name;
+                var state = obj.data.new_state.state;
+                var unit = obj.data.new_state.attributes.unit_of_measurement;
 
-            if (typeof(unit) == "undefined") {
-                unit = "";
-            }
-            if (-1 != entities.indexOf(entity_id)) {
-                var myElement = document.getElementById(entity_id);
+                if (typeof(unit) == "undefined") {
+                    unit = "";
+                }
+                if (-1 != entities.indexOf(entity_id)) {
+                    var myElement = document.getElementById(entity_id);
 
-                if(null !== myElement){
-                    myElement.textContent = state + " " + unit;
-                } else {
-                    var newElement = document.createElement('div');
+                    if(null !== myElement){
+                        myElement.textContent = state + " " + unit;
+                    } else {
+                        var newElement = document.createElement('div');
 
-                    newElement.className = 'col-md-4';
-                    newElement.innerHTML = "<div class='well'><h1><b id=" +
-                        entity_id + ">" + state + " " + unit +
-                        "</b></h1><p>" + friendly_name + "</p></div>";
-                    output.appendChild(newElement);
+                        newElement.className = 'col-md-4';
+                        newElement.innerHTML = "<div class='well'><h1><b id=" +
+                            entity_id + ">" + state + " " + unit +
+                            "</b></h1><p>" + friendly_name + "</p></div>";
+                        output.appendChild(newElement);
+                    }
                 }
             }
         };
