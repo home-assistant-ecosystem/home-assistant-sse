@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Simple display for Home Assistant">
+    <meta name="author" content="Fabian Affolter">
+    <link href="css/home-assistant-display.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+    <title>Home Assistant Display</title>
+</head>
+<body>
+<div class="container-fluid" style="margin-top: 20px;">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row" id="output"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Entities to display. Replace the period in the name with an underscore.
+    var entities = ['sensor_cpu',
+                    'sensor_time',
+                    'binary_sensor_printer',
+                    'sensor_time_beat',
+                    'sun_sun'
+                    ];
+
+    if (typeof(EventSource) !== "undefined") {
+        var source = new EventSource("/api/stream");
+        source.onmessage = function(event) {
+            var obj = JSON.parse(event.data);
+
+            var entity_id = obj.data.new_state.entity_id.replace(/\./g, "_");
+            var friendly_name = obj.data.new_state.attributes.friendly_name;
+            var state = obj.data.new_state.state;
+            var unit = obj.data.new_state.attributes.unit_of_measurement;
+
+            if (typeof(unit) == "undefined") {
+                unit = "";
+            }
+            if ($.inArray(entity_id, entities) > -1) {
+                if($('#' + entity_id).length){
+                    $('#' + entity_id).text(state);
+                } else {
+                    $('#output').append("<div class='col-md-4'>" +
+                                        "<div class='well'><h1><b id=" +
+                                        entity_id + ">" + state + " " +
+                                        unit + "</b></h1><p>" + friendly_name +
+                                        "</p></div></div>");
+                }
+            }
+        };
+    }
+</script>
+</body>
+</html>
