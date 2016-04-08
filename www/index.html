@@ -6,7 +6,6 @@
     <meta name="description" content="Simple display for Home Assistant">
     <meta name="author" content="Fabian Affolter">
     <link href="css/home-assistant-display.css" rel="stylesheet">
-    <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
     <title>Home Assistant Display</title>
 </head>
 <body>
@@ -29,26 +28,38 @@
 
     if (typeof(EventSource) !== "undefined") {
         var source = new EventSource("/api/stream");
+        var output = document.getElementById('output');
+
         source.onmessage = function(event) {
+            if ("ping" === event.data) {
+                return;
+            }
+
             var obj = JSON.parse(event.data);
 
-            var entity_id = obj.data.new_state.entity_id.replace(/\./g, "_");
-            var friendly_name = obj.data.new_state.attributes.friendly_name;
-            var state = obj.data.new_state.state;
-            var unit = obj.data.new_state.attributes.unit_of_measurement;
+            if ("undefined" !== typeof obj.data.new_state) {
+                var entity_id = obj.data.new_state.entity_id.replace(/\./g, "_");
+                var friendly_name = obj.data.new_state.attributes.friendly_name;
+                var state = obj.data.new_state.state;
+                var unit = obj.data.new_state.attributes.unit_of_measurement;
 
-            if (typeof(unit) == "undefined") {
-                unit = "";
-            }
-            if ($.inArray(entity_id, entities) > -1) {
-                if($('#' + entity_id).length){
-                    $('#' + entity_id).text(state);
-                } else {
-                    $('#output').append("<div class='col-md-4'>" +
-                                        "<div class='well'><h1><b id=" +
-                                        entity_id + ">" + state + " " +
-                                        unit + "</b></h1><p>" + friendly_name +
-                                        "</p></div></div>");
+                if (typeof(unit) == "undefined") {
+                    unit = "";
+                }
+                if (-1 != entities.indexOf(entity_id)) {
+                    var myElement = document.getElementById(entity_id);
+
+                    if(null !== myElement){
+                        myElement.textContent = state + " " + unit;
+                    } else {
+                        var newElement = document.createElement('div');
+
+                        newElement.className = 'col-md-4';
+                        newElement.innerHTML = "<div class='well'><h1><b id=" +
+                            entity_id + ">" + state + " " + unit +
+                            "</b></h1><p>" + friendly_name + "</p></div>";
+                        output.appendChild(newElement);
+                    }
                 }
             }
         };
