@@ -27,7 +27,7 @@
                     ];
 
     if (typeof(EventSource) !== "undefined") {
-        var source = new EventSource("/api/stream");
+        var source = new EventSource("/api/stream?api_password=YOUR_PASSWORD");
         var output = document.getElementById('output');
 
         source.onmessage = function(event) {
