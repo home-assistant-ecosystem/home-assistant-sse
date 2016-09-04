@@ -7,7 +7,7 @@ the possibility of interacting with Home Assistant by the user.
 
 A requirement on the client-side is existing support for the
 [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
-interface. THis means that not all browsers are supported.
+interface. This means that not all browsers are supported.
 
 Installation
 ------------
