@@ -36,6 +36,12 @@ in the entities.
                     'sun_sun'
                     ];
 
+Also set the API password used by your Home Assistant installation.
+
+.. code:: javascript
+
+    var source = new EventSource("/api/stream?api_password=YOUR_PASSWORD");
+
 Launch your Home Assistant instance.
 
 .. code:: bash
