@@ -1,6 +1,8 @@
 Home Assistant Server Sent Events
 =================================
 
+**This doesn't work any longer as the usage of `api_password` in requests in Home Assistant is deprecated.**
+
 `Home Assistant <https://home-assistant.io>`__ ships its own very nice
 web frontend. This prototype shows an option to display values without
 the possibility of interacting with Home Assistant by the user.
